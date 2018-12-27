@@ -12,6 +12,7 @@ Converts Rigify rig to Humanoid compatible
 4) Do something cool!
 5) p.s. Check "Only Deform Bones" when exporting to exclude unnecessary bones from fbx
 
+![Before and after](https://github.com/AlexLemminG/RigifyToUnity/raw/master/HowTo/6%20-%20diff.png)
 This script basicaly follows this tutorial  
 https://docs.unity3d.com/560/Documentation/Manual/BlenderAndRigify.html
 
