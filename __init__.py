@@ -36,11 +36,15 @@ class UnityMecanim_Convert2Unity(bpy.types.Operator):
         
         bpy.ops.object.mode_set(mode='OBJECT')
 
-        ob.data.bones['DEF-breast.L'].use_deform = False
-        ob.data.bones['DEF-breast.R'].use_deform = False
+        if 'DEF-breast.L' in ob.data.bones :
+            ob.data.bones['DEF-breast.L'].use_deform = False
+        if 'DEF-breast.R' in ob.data.bones :
+            ob.data.bones['DEF-breast.R'].use_deform = False
 
-        ob.data.bones['DEF-pelvis.L'].use_deform = False
-        ob.data.bones['DEF-pelvis.R'].use_deform = False
+        if 'DEF-pelvis.L' in ob.data.bones :
+            ob.data.bones['DEF-pelvis.L'].use_deform = False
+        if 'DEF-pelvis.R' in ob.data.bones :
+            ob.data.bones['DEF-pelvis.R'].use_deform = False
 
         bpy.ops.object.mode_set(mode='EDIT')
         
@@ -81,11 +85,15 @@ class UnityMecanim_Convert2Unity(bpy.types.Operator):
         ob.data.edit_bones.remove(ob.data.edit_bones['DEF-thigh.R.001'])
         ob.data.edit_bones.remove(ob.data.edit_bones['DEF-shin.R.001'])
 
-        ob.data.edit_bones.remove(ob.data.edit_bones['DEF-pelvis.L'])
-        ob.data.edit_bones.remove(ob.data.edit_bones['DEF-pelvis.R'])
+        if 'DEF-pelvis.L' in ob.data.bones :
+            ob.data.edit_bones.remove(ob.data.edit_bones['DEF-pelvis.L'])
+        if 'DEF-pelvis.R' in ob.data.bones :
+            ob.data.edit_bones.remove(ob.data.edit_bones['DEF-pelvis.R'])
 
-        ob.data.edit_bones.remove(ob.data.edit_bones['DEF-breast.L'])
-        ob.data.edit_bones.remove(ob.data.edit_bones['DEF-breast.R'])
+        if 'DEF-breast.L' in ob.data.bones :
+            ob.data.edit_bones.remove(ob.data.edit_bones['DEF-breast.L'])
+        if 'DEF-breast.R' in ob.data.bones :
+            ob.data.edit_bones.remove(ob.data.edit_bones['DEF-breast.R'])
 
         bpy.ops.object.mode_set(mode='OBJECT')
 
