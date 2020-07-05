@@ -2,7 +2,8 @@
 Converts Rigify rig to Humanoid compatible  
 
 **_Installation:_** 
-- Open File -> User Preferences -> Addons -> Instal from File... -> choose the downloaded script and install it
+- Download this repo as zip archive
+- In Blender Open Edit tab -> Preferences... -> Add-ons -> Instal... -> choose the downloaded zip archive
 - You can find the Addon under Rigging category, there should be "Rigify to Unity" addon
 
 **_Usage:_** 
