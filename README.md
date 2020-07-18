@@ -10,6 +10,7 @@ Converts Rigify rig to Humanoid compatible
 1) Create Basic Human Rig
 2) Press "Generate Rig" from Rigify tab
 3) Press "Prepare rig for unity" from Rigify to Unity converter tab
+> :warning: Do it before weight painting as some deform bones will be removed
 4) Do something cool!
 5) p.s. Check "Only Deform Bones" when exporting to exclude unnecessary bones from fbx
 
