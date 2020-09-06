@@ -21,7 +21,7 @@ class UnityMecanim_Panel(bpy.types.Panel):
 
     @classmethod
     def poll(self, context):
-        return context.object.type == 'ARMATURE' and "DEF-upper_arm.L.001" in bpy.context.object.data.bones
+        return context.object.type == 'ARMATURE' and "DEF-spine.006" in bpy.context.object.data.bones
     
     def draw(self, context):
         self.layout.operator("rig4mec.convert2unity")
@@ -33,79 +33,119 @@ class UnityMecanim_Convert2Unity(bpy.types.Operator):
     
     def execute(self, context):
         ob = bpy.context.object
+
+        parents = [ \
+            ('DEF-pelvis.L', 'DEF-spine'), \
+            ('DEF-pelvis.R', 'DEF-spine'), \
+            ('DEF-breast.L', 'DEF-spine.003'), \
+            ('DEF-breast.R', 'DEF-spine.003'), \
+            ('DEF-shoulder.L', 'DEF-spine.003'), \
+            ('DEF-shoulder.R', 'DEF-spine.003'), \
+            ('DEF-upper_arm.L', 'DEF-shoulder.L'), \
+            ('DEF-upper_arm.R', 'DEF-shoulder.R'), \
+            ('DEF-thigh.L', 'DEF-spine'), \
+            ('DEF-thigh.R', 'DEF-spine'), \
+            ('DEF-f_index.01.R', 'DEF-hand.R'), \
+            ('DEF-thumb.01.R', 'DEF-hand.R'), \
+            ('DEF-f_middle.01.R', 'DEF-hand.R'), \
+            ('DEF-f_ring.01.R', 'DEF-hand.R'), \
+            ('DEF-f_pinky.01.R', 'DEF-hand.R'), \
+            ('DEF-f_index.01.L', 'DEF-hand.L'), \
+            ('DEF-thumb.01.L', 'DEF-hand.L'), \
+            ('DEF-f_middle.01.L', 'DEF-hand.L'), \
+            ('DEF-f_ring.01.L', 'DEF-hand.L'), \
+            ('DEF-f_pinky.01.L', 'DEF-hand.L'), \
+            ('DEF-palm.01.L', 'DEF-hand.L') ,\
+            ('DEF-palm.02.L', 'DEF-hand.L') ,\
+            ('DEF-palm.03.L', 'DEF-hand.L') ,\
+            ('DEF-palm.04.L', 'DEF-hand.L') ,\
+            ('DEF-palm.01.R', 'DEF-hand.R') ,\
+            ('DEF-palm.02.R', 'DEF-hand.R') ,\
+            ('DEF-palm.03.R', 'DEF-hand.R') ,\
+            ('DEF-palm.04.R', 'DEF-hand.R') ,\
+        ]
+
+        #commented out to prevent deletion of this bones
         
+        disableDeforms = [ \
+            # 'DEF-breast.L', \
+            # 'DEF-breast.R', \
+            # 'DEF-pelvis.L', \
+            # 'DEF-pelvis.R', \
+        ]
+
+        tailsToCopy = [ \
+            # ('DEF-upper_arm.L', 'DEF-upper_arm.L.001'), \
+            # ('DEF-forearm.L', 'DEF-forearm.L.001'), \
+            # ('DEF-upper_arm.R', 'DEF-upper_arm.R.001'), \
+            # ('DEF-forearm.R', 'DEF-forearm.R.001'), \
+            # ('DEF-thigh.L', 'DEF-thigh.L.001'), \
+            # ('DEF-shin.L', 'DEF-shin.L.001'), \
+            # ('DEF-thigh.R', 'DEF-thigh.R.001'), \
+            # ('DEF-shin.R', 'DEF-shin.R.001') \
+        ]
+        
+        parentsToCopy = [ \
+            # ('DEF-forearm.L', 'DEF-upper_arm.L.001'), \
+            # ('DEF-hand.L', 'DEF-forearm.L.001'), \
+            # ('DEF-forearm.R', 'DEF-upper_arm.R.001'), \
+            # ('DEF-hand.R', 'DEF-forearm.R.001'), \
+            # ('DEF-shin.L', 'DEF-thigh.L.001'), \
+            # ('DEF-foot.L', 'DEF-shin.L.001'), \
+            # ('DEF-shin.R', 'DEF-thigh.R.001'), \
+            # ('DEF-foot.R', 'DEF-shin.R.001') \
+        ]
+
+        bonesToDelete = [ \
+            # 'DEF-upper_arm.L.001', \
+            # 'DEF-forearm.L.001', \
+            # 'DEF-upper_arm.R.001', \
+            # 'DEF-forearm.R.001', \
+            # 'DEF-thigh.L.001', \
+            # 'DEF-shin.L.001', \
+            # 'DEF-thigh.R.001', \
+            # 'DEF-shin.R.001', \
+            # 'DEF-pelvis.L', \
+            # 'DEF-pelvis.R', \
+            # 'DEF-breast.L', \
+            # 'DEF-breast.R' \
+        ]
+        renames = [ \
+            ("DEF-spine.006", "DEF-head"), \
+            ("DEF-spine.005","DEF-neck") \
+        ]
+
         bpy.ops.object.mode_set(mode='OBJECT')
-
-        if 'DEF-breast.L' in ob.data.bones :
-            ob.data.bones['DEF-breast.L'].use_deform = False
-        if 'DEF-breast.R' in ob.data.bones :
-            ob.data.bones['DEF-breast.R'].use_deform = False
-
-        if 'DEF-pelvis.L' in ob.data.bones :
-            ob.data.bones['DEF-pelvis.L'].use_deform = False
-        if 'DEF-pelvis.R' in ob.data.bones :
-            ob.data.bones['DEF-pelvis.R'].use_deform = False
+        
+        for bone in disableDeforms:
+            if bone in ob.data.bones :
+                ob.data.bones[bone].use_deform = False
 
         bpy.ops.object.mode_set(mode='EDIT')
+
+        for child, parent in parents:
+            if child in ob.data.bones and parent in ob.data.bones:
+                ob.data.edit_bones[child].parent = ob.data.edit_bones[parent]
         
-        ob.data.edit_bones['DEF-shoulder.L'].parent = ob.data.edit_bones['DEF-spine.003']
-        ob.data.edit_bones['DEF-shoulder.R'].parent = ob.data.edit_bones['DEF-spine.003']
-        
-        ob.data.edit_bones['DEF-upper_arm.L'].parent = ob.data.edit_bones['DEF-shoulder.L']
-        ob.data.edit_bones['DEF-upper_arm.R'].parent = ob.data.edit_bones['DEF-shoulder.R']
-        
-        ob.data.edit_bones['DEF-thigh.L'].parent = ob.data.edit_bones['DEF-spine']
-        ob.data.edit_bones['DEF-thigh.R'].parent = ob.data.edit_bones['DEF-spine']
+        for child, parent in tailsToCopy:
+            if child in ob.data.bones and parent in ob.data.bones:
+                ob.data.edit_bones[child].tail = ob.data.edit_bones[parent].tail
 
-        ob.data.edit_bones['DEF-upper_arm.L'].tail = ob.data.edit_bones['DEF-upper_arm.L.001'].tail
-        ob.data.edit_bones['DEF-forearm.L'].tail = ob.data.edit_bones['DEF-forearm.L.001'].tail
-        ob.data.edit_bones['DEF-forearm.L'].parent = ob.data.edit_bones['DEF-upper_arm.L.001'].parent
-        ob.data.edit_bones['DEF-hand.L'].parent = ob.data.edit_bones['DEF-forearm.L.001'].parent
-        ob.data.edit_bones.remove(ob.data.edit_bones['DEF-upper_arm.L.001'])
-        ob.data.edit_bones.remove(ob.data.edit_bones['DEF-forearm.L.001'])
+        for child, parent in parentsToCopy:
+            if child in ob.data.bones and parent in ob.data.bones:
+                ob.data.edit_bones[child].parent = ob.data.edit_bones[parent].parent
 
-        ob.data.edit_bones['DEF-upper_arm.R'].tail = ob.data.edit_bones['DEF-upper_arm.R.001'].tail
-        ob.data.edit_bones['DEF-forearm.R'].tail = ob.data.edit_bones['DEF-forearm.R.001'].tail
-        ob.data.edit_bones['DEF-forearm.R'].parent = ob.data.edit_bones['DEF-upper_arm.R.001'].parent
-        ob.data.edit_bones['DEF-hand.R'].parent = ob.data.edit_bones['DEF-forearm.R.001'].parent
-        ob.data.edit_bones.remove(ob.data.edit_bones['DEF-upper_arm.R.001'])
-        ob.data.edit_bones.remove(ob.data.edit_bones['DEF-forearm.R.001'])
-
-        ob.data.edit_bones['DEF-thigh.L'].tail = ob.data.edit_bones['DEF-thigh.L.001'].tail
-        ob.data.edit_bones['DEF-shin.L'].tail = ob.data.edit_bones['DEF-shin.L.001'].tail
-        ob.data.edit_bones['DEF-shin.L'].parent = ob.data.edit_bones['DEF-thigh.L.001'].parent
-        ob.data.edit_bones['DEF-foot.L'].parent = ob.data.edit_bones['DEF-shin.L.001'].parent
-        ob.data.edit_bones.remove(ob.data.edit_bones['DEF-thigh.L.001'])
-        ob.data.edit_bones.remove(ob.data.edit_bones['DEF-shin.L.001'])
-
-        ob.data.edit_bones['DEF-thigh.R'].tail = ob.data.edit_bones['DEF-thigh.R.001'].tail
-        ob.data.edit_bones['DEF-shin.R'].tail = ob.data.edit_bones['DEF-shin.R.001'].tail
-        ob.data.edit_bones['DEF-shin.R'].parent = ob.data.edit_bones['DEF-thigh.R.001'].parent
-        ob.data.edit_bones['DEF-foot.R'].parent = ob.data.edit_bones['DEF-shin.R.001'].parent
-        ob.data.edit_bones.remove(ob.data.edit_bones['DEF-thigh.R.001'])
-        ob.data.edit_bones.remove(ob.data.edit_bones['DEF-shin.R.001'])
-
-        if 'DEF-pelvis.L' in ob.data.bones :
-            ob.data.edit_bones.remove(ob.data.edit_bones['DEF-pelvis.L'])
-        if 'DEF-pelvis.R' in ob.data.bones :
-            ob.data.edit_bones.remove(ob.data.edit_bones['DEF-pelvis.R'])
-
-        if 'DEF-breast.L' in ob.data.bones :
-            ob.data.edit_bones.remove(ob.data.edit_bones['DEF-breast.L'])
-        if 'DEF-breast.R' in ob.data.bones :
-            ob.data.edit_bones.remove(ob.data.edit_bones['DEF-breast.R'])
+        for bone in bonesToDelete:
+            if bone in ob.data.bones :
+                ob.data.edit_bones.remove(ob.data.edit_bones[bone])
 
         bpy.ops.object.mode_set(mode='OBJECT')
 
-        namelist = [("DEF-spine.006", "DEF-head"),("DEF-spine.005","DEF-neck")]
 
-        for name, newname in namelist:
-            # get the pose bone with name
+        for name, newname in renames:
             pb = ob.pose.bones.get(name)
-            # continue if no bone of that name
             if pb is None:
                 continue
-            # rename
             pb.name = newname
 
         self.report({'INFO'}, 'Unity ready rig!')                
@@ -113,12 +153,10 @@ class UnityMecanim_Convert2Unity(bpy.types.Operator):
         return{'FINISHED'}
 
 def register():
-    #classes     
     bpy.utils.register_class(UnityMecanim_Panel)
     bpy.utils.register_class(UnityMecanim_Convert2Unity)
     
     
 def unregister():
-    #classes
     bpy.utils.unregister_class(UnityMecanim_Panel)
     bpy.utils.unregister_class(UnityMecanim_Convert2Unity)
